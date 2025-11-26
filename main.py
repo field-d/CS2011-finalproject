@@ -80,24 +80,21 @@ while run_expr:
 
             # TrialParticipant uses FlankerFileReader - objects interaction
             new_stimuli = flanker_participant.file_reader.get_alternate_rounds()
+            flanker_participant.change_stimuli(new_stimuli)
             print("Word set has been changed! Starting from round 1... \n")
             rounds_completed = 0
     
     # for my final project I aimed to tackle a problem I created in Assignment 1, hard-coding the number of rounds to 4
-    # my idea was let TrialParticipant manage the internal state and let main.py control the experiment flow.
+    # my idea was let TrialParticipant manage the internal state of the program and let main.py control the experiment flow.
     if rounds_completed >= flanker_participant.get_round_count():
         run_expr = False
         break
 
     # more rounds exist, safe to increment the round
-    flanker_participant.increment_round()
-
-    #TODO: feature 2 idea: if the participant reaches a streak of 10(?) reverse the keys for the stimuli. ie: x,c is now L and v,b is now A ??
-    #TODO: look at Assn 1 Feedback, implemenet changes
-    #TODO: look at Assn 2 Feedback (when released) implement changes
+    flanker_participant.increment_and_shuffle_round()
 
 
-print("/n"*5)
+print("\n"*5)
 print("Thank you for participating in the experiment!")
 print("Task has completed.")
 print("Flanker Task terminated.")

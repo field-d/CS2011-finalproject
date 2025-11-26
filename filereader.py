@@ -48,6 +48,24 @@ class FlankerFileReader(FileReader):
         self.stimuli = {}
         self.round_num_list = []
 
+    def read_all(self):
+        lines = super().read_all()
+
+        if not lines:
+            print("Warning: File is empty or could not be read.")
+            return []
+        
+        valid_lines = []
+        for line in lines:
+            if line.strip() and ',' in line:
+                parts = line.strip().split(',')
+                if len(parts) >= 3:
+                    valid_lines.append(line)
+                else:
+                    print(f"Warning: Skipped invalid line: {line.strip()}")
+
+        return valid_lines    
+
     def __str__(self):
         """
         Returns a formateed string representation of the current FlankerFileReader object.
@@ -74,11 +92,10 @@ class FlankerFileReader(FileReader):
         lines = self.read_all()
 
         if not lines:
-            return
+            return {}
         
         for line in lines:
             clean_lines = line.strip().split(",")
-
             key = int(clean_lines[0])
             inner_key = clean_lines[1]
             values = clean_lines[2:]
@@ -182,7 +199,12 @@ class FlankerFileReader(FileReader):
             self.all_rounds()
 
         max_round = len(self.stimuli)
-        start = random.randint(1, max_round)
+
+        # ensuring the start value can never be the last value
+        if max_round > 1:
+            start = random.randint(1, max_round - 1) # changed from max_round to max_round - 1
+        else:
+            start = 1 # edge case: if only 1 round exists
         end = random.randint(start, max_round)
 
         temp_dict = {}
@@ -259,7 +281,6 @@ class FlankerFileReader(FileReader):
         """
         Returns an alternate set of rounds
         This method demonstrated method overriding by crearting a variation of all_rounds()
-
         """
 
         if not self.stimuli:

@@ -39,7 +39,10 @@ class TrialParticipant:
         return (f"Participant: {self.participant_num} - {full_name}, Correct: {self.correct}, Incorrect: {self.incorrect}")  # string method for the Trial participant class includes name +
                                                                                                                                 # results of the participant's round
 
-    def increment_round(self):
+    def get_correct_streak(self):
+        return self.__correct_streak
+
+    def increment_and_shuffle_round(self):
         """
         ***The increment_ round method moves the game onto the next round once 6 words have been shown.*** REMOVED
 
@@ -130,7 +133,7 @@ class TrialParticipant:
         """
         This method incrmements a participant's incorrect score by 1.
         """
-        self.incorrect = self.incorrect +1  
+        self.incorrect = self.incorrect +1
 
     def reset_wordpos(self):
         """
@@ -247,21 +250,21 @@ class TrialParticipant:
         """
 
         if self.round > 1:
-            print(f"\nPENALTY TRIGGERED: {self.__penalty_threshold} incorrect answers in a row!")
-            print(f"Moving back from round {self.round} to round {self.round - 1}\n")
-            self.round = self.round - 1
-            self.reset_wordpos()
-            self.__incorrect_streak = 0
+            # moved back one round as the penalty
+            print(f"\nPENALTY TRIGGERED: {self.__penalty_threshold} INCORRECT ANSWERS IN A ROW!")
+            print(f"MOVING BACK FROM {self.round} TO ROUND {self.round - 1}\n")
+            self.round = self.round - 1 # decrement round
+            self.reset_wordpos() # reuse existing method
+            self.__incorrect_streak = 0 # reset streak counter
 
+            # reshuffle the round being returned to (code reuse)
             for key in self.stimuli[self.round]:
                 random.shuffle(self.stimuli[self.round][key])
-
         else:
-
-            print(f"\nPENALTY TRIGGERED: {self.__penalty_threshold} incorrect answers in a row!")
-            print("Restarting Round 1")
+            # if already on round 1, restart round 1
+            print(f"\nPENALTY TRIGGERED: {self.__penalty_threshold} INCORRECT ANSWERS IN A ROW!")
+            print("RESTARTING ROUND 1")
             self.reset_wordpos()
             self.__incorrect_streak = 0
-
             for key in self.stimuli[self.round]:
                 random.shuffle(self.stimuli[self.round][key])
